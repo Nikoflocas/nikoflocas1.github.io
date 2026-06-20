@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nikolas Flocas — Security Analyst</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg: #0E1116;
+    --bg-raised: #151920;
+    --bg-card: #11151B;
+    --line: #262C36;
+    --line-soft: #1B2027;
+    --text: #E8E6E1;
+    --text-dim: #9CA3AE;
+    --text-faint: #5C6470;
+    --amber: #D9A441;
+    --amber-dim: #8A6A2E;
+    --steel: #5B8AA6;
+    --steel-dim: #3C5C6E;
+    --green: #6FA888;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:48px 48px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(14,17,22,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:920px;
+    margin:0 auto;
+    padding:16px 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .nav-id{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+  }
+  .nav-id b{color:var(--amber);font-weight:600;}
+  .nav-links{
+    display:flex;
+    gap:24px;
+    font-family:var(--mono);
+    font-size:12.5px;
+  }
+  .nav-links a{
+    color:var(--text-dim);
+    text-decoration:none;
+    transition:color 0.15s ease;
+  }
+  .nav-links a:hover{color:var(--amber);}
+
+  @media (max-width:560px){
+    .nav-links{display:none;}
+  }
+
+  /* ---------- HERO : INCIDENT TICKET ---------- */
+  header.hero{
+    padding:64px 0 40px;
+  }
+
+  .ticket{
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  .ticket-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 18px;
+    background:var(--bg-raised);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
+
+  .ticket-body{padding:32px 28px 28px;}
+
+  .ticket-fields{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:28px;
+    font-family:var(--mono);
+  }
+  @media (max-width:640px){
+    .ticket-fields{grid-template-columns:repeat(2,1fr);}
+  }
+  .field-label{
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--text-faint);
+    margin-bottom:5px;
+  }
+  .field-value{font-size:13.5px;font-weight:600;}
+  .sev-high{color:var(--amber);}
+  .status-open{color:var(--steel);}
+
+  .ticket-title{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:clamp(32px,5vw,46px);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin-bottom:14px;
+  }
+  .ticket-title .accent{color:var(--amber);}
+
+  .ticket-desc{
+    font-size:16px;
+    color:var(--text-dim);
+    max-width:560px;
+    margin-bottom:24px;
+  }
+
+  .tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .tag{
+    font-family:var(--mono);
+    font-size:11.5px;
+    padding:5px 10px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    color:var(--text-dim);
+    background:var(--bg-raised);
+  }
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section{padding:56px 0;}
+  section + section{border-top:1px solid var(--line);}
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:28px;
+  }
+  .section-num{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--amber-dim);
+  }
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .section-sub{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+    margin-left:auto;
+  }
+
+  /* ---------- CASE CARDS (projects) ---------- */
+  .case{
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    border-radius:6px;
+    padding:24px 24px 22px;
+    margin-bottom:16px;
+  }
+  .case-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:10px;
+  }
+  .case-id{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    white-space:nowrap;
+    padding-top:3px;
+  }
+  .case-name{
+    font-size:17px;
+    font-weight:700;
+  }
+  .case-desc{
+    color:var(--text-dim);
+    font-size:14.5px;
+    margin-bottom:14px;
+    max-width:640px;
+  }
+  .case-meta{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .pill{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:4px 9px;
+    border-radius:3px;
+    background:rgba(91,138,166,0.12);
+    color:var(--steel);
+    border:1px solid rgba(91,138,166,0.25);
+  }
+  .pill.amber{
+    background:rgba(217,164,65,0.12);
+    color:var(--amber);
+    border-color:rgba(217,164,65,0.25);
+  }
+
+  /* ---------- EXPERIENCE TIMELINE ---------- */
+  .exp-row{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:20px;
+    padding:18px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .exp-row:last-child{border-bottom:none;}
+  @media (max-width:560px){
+    .exp-row{grid-template-columns:1fr;gap:6px;}
+  }
+  .exp-time{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+    padding-top:2px;
+  }
+  .exp-role{font-weight:700;font-size:15.5px;margin-bottom:3px;}
+  .exp-org{color:var(--steel);font-size:13.5px;margin-bottom:8px;}
+  .exp-desc{color:var(--text-dim);font-size:14px;}
+
+  /* ---------- SKILLS GRID ---------- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    background:var(--line);
+  }
+  @media (max-width:640px){
+    .skills-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  .skill-cell{
+    background:var(--bg-card);
+    padding:16px 18px;
+  }
+  .skill-cat{
+    font-family:var(--mono);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    color:var(--amber-dim);
+    margin-bottom:8px;
+  }
+  .skill-list{font-size:13.5px;color:var(--text-dim);}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    padding:48px 0 60px;
+    text-align:center;
+  }
+  .footer-line{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+    margin-bottom:18px;
+  }
+  .email-link{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:16px;
+    font-weight:600;
+    color:var(--text);
+    border:1px solid var(--amber-dim);
+    padding:12px 26px;
+    border-radius:5px;
+    text-decoration:none;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .email-link:hover{
+    background:var(--amber);
+    color:#0E1116;
+  }
+  .footer-meta{
+    margin-top:22px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+  }
+
+  a:focus-visible, .email-link:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-id"><b>NF</b> / security analyst</div>
+    <div class="nav-links">
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="ticket">
+      <div class="ticket-bar">
+        <span class="dot"></span>
+        case_0001 — analyst_profile.log
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-fields">
+          <div>
+            <div class="field-label">Severity</div>
+            <div class="field-value sev-high">SOC Analyst</div>
+          </div>
+          <div>
+            <div class="field-label">Status</div>
+            <div class="field-value status-open">Open to Work</div>
+          </div>
+          <div>
+            <div class="field-label">Analyst</div>
+            <div class="field-value">Nikolas Flocas</div>
+          </div>
+          <div>
+            <div class="field-label">Focus</div>
+            <div class="field-value">SOC / Threat Detection</div>
+          </div>
+        </div>
+
+        <h1 class="ticket-title">Detecting threats.<br>Tuning toward <span class="accent">SOC analyst.</span></h1>
+        <p class="ticket-desc">
+          Security Analyst with hands-on SOC experience across threat detection, alert triage, and malware analysis — backed by Cisco Cyber Ops and Microsoft SC-200 certification.
+        </p>
+
+        <div class="tags">
+          <span class="tag">Splunk SIEM</span>
+          <span class="tag">Microsoft Defender</span>
+          <span class="tag">SentinelOne</span>
+          <span class="tag">Wireshark</span>
+          <span class="tag">SC-200</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="experience">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <span class="section-title">Experience</span>
+      <span class="section-sub">chronological</span>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-time">05/2025 — Current</div>
+      <div>
+        <div class="exp-role">SOC Analyst Intern</div>
+        <div class="exp-org">Astro Information Security — San Francisco, CA</div>
+        <div class="exp-desc">
+          Monitor SOC environments using Splunk and Wireshark, identifying suspicious behavior and escalating potential incidents. Developed and tuned detection rules to improve alert accuracy and reduce false positives. Performed endpoint and network monitoring to detect anomalous behavior and support incident response. Participated in CTF competitions and cybersecurity research to sharpen offensive and defensive skills.
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-time">09/2024 — Current</div>
+      <div>
+        <div class="exp-role">Cyber Security Researcher</div>
+        <div class="exp-org">Nearshore Cyber — Mexico</div>
+        <div class="exp-desc">
+          Performed malware analysis and reverse engineering to understand adversary behavior, applying attacker TTPs across pre- and post-exploitation phases. Conducted OS log analysis across Windows and Linux environments to identify security anomalies. Delivered technical demos on AI and LLM applications in cybersecurity operations.
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-time">10/2023 — 11/2024</div>
+      <div>
+        <div class="exp-role">Sales Representative</div>
+        <div class="exp-org">AllSaints — Palo Alto, CA</div>
+        <div class="exp-desc">
+          Delivered personalized customer experiences while building client relationships and supporting daily sales objectives — direct, repeatable practice in the professionalism and communication a SOC analyst needs when escalating findings to stakeholders.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <span class="section-title">Labs & Projects</span>
+      <span class="section-sub">case files</span>
+    </div>
+
+    <div class="case">
+      <div class="case-top">
+        <div class="case-name">Detection Rule Tuning — Astro InfoSec SOC</div>
+        <div class="case-id">CASE-001</div>
+      </div>
+      <p class="case-desc">
+        Developed and tuned Splunk detection rules during SOC internship to improve alert accuracy and cut false positives — direct, ongoing work strengthening the signal a Tier-1 analyst acts on.
+      </p>
+      <div class="case-meta">
+        <span class="pill">Splunk</span>
+        <span class="pill">Detection Engineering</span>
+        <span class="pill amber">Alert Tuning</span>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-top">
+        <div class="case-name">Malware Analysis & Reverse Engineering</div>
+        <div class="case-id">CASE-002</div>
+      </div>
+      <p class="case-desc">
+        Conducted malware analysis and reverse engineering at Nearshore Cyber to map adversary behavior across pre- and post-exploitation phases, paired with cross-platform OS log analysis on Windows and Linux.
+      </p>
+      <div class="case-meta">
+        <span class="pill">Malware Analysis</span>
+        <span class="pill">Reverse Engineering</span>
+        <span class="pill amber">TTP Mapping</span>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-top">
+        <div class="case-name">Certifications & Hands-On Training</div>
+        <div class="case-id">CASE-003</div>
+      </div>
+      <p class="case-desc">
+        Cisco Cyber Ops, Microsoft SC-200 (Security Operations Analyst), Fortinet Administrator & Operator, Splunk Search Expert Specialization, and TryHackMe SOC Tier 1 — a certification stack built specifically around SOC detection and response work.
+      </p>
+      <div class="case-meta">
+        <span class="pill">Cisco Cyber Ops</span>
+        <span class="pill">SC-200</span>
+        <span class="pill amber">Splunk Search Expert</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <span class="section-title">Skills</span>
+      <span class="section-sub">by category</span>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-cell">
+        <div class="skill-cat">SIEM & EDR</div>
+        <div class="skill-list">Splunk SIEM · Microsoft Defender · SentinelOne · Fortinet</div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Network & Forensics</div>
+        <div class="skill-list">Wireshark · Velociraptor · Packet Inspection</div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Detection & Response</div>
+        <div class="skill-list">Alert Triage · Detection Tuning · Incident Response</div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Cloud & Systems</div>
+        <div class="skill-list">AWS · Microsoft Azure · VMware · Windows · Linux · macOS</div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Scripting & Query</div>
+        <div class="skill-list">Python · KQL · PowerShell · Bash · SQL</div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Platforms & Tools</div>
+        <div class="skill-list">ServiceNow · SAP · Visio · Microsoft 365</div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-line">// end of file — get in touch</div>
+    <a class="email-link" href="mailto:Nflocas407@gmail.com">Email Nikolas</a>
+    <div class="footer-meta">San Mateo, CA · (650) 302-2444 · linkedin.com/in/nikoflocas1</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
